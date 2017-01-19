@@ -69,22 +69,10 @@ for elt = 1:m
 end
 X = [ones(m,1) X];
 
-size(X)
-
-size(Theta1)
-
 a2 = sigmoid(X*Theta1');
 a2 = [ones(m,1) a2];
-size(a2)
-
-size(Theta2)
 
 a3 = sigmoid(a2*Theta2');
-size(a3)
-
-size(Y)
-
-
 
 for M = 1:m
 	ym  = Y(M,:);
@@ -97,12 +85,26 @@ Theta2reg = [zeros(num_labels,1) Theta2(:,2:end)];
 
 J = J + lambda/2/m*(trace(Theta2reg(:)'*Theta2reg(:))+ trace(Theta1reg(:)'*Theta1reg(:)));
 
+Del1 = zeros(hidden_layer_size,input_layer_size + 1);
+Del2 = zeros(num_labels,hidden_layer_size + 1);
 
+for M = 1:m
+	xm = X(M,:);
+	ym  = Y(M,:);
+	a3m = a3(M,:);
+	a2m = a2(M, :);
+	delta3 = a3m - ym;	
+	%size(Theta2) %10 x 26
+	%size(delta3)	% 1 * 10
+	%size(a2m)	% 1 * 26
+	delta2 = ( Theta2' * delta3' )' .* a2m .* (1 - a2m);
+	delta2 = delta2(2:end);
+	Del2 = Del2 + delta3' * a2m; %10 * 26
+	Del1 = Del1 + delta2' * xm;	%25 * 401
+end	
 
-
-
-
-
+Theta2_grad = 1/m * Del2  + lambda/m * Theta2reg;
+Theta1_grad = 1/m * Del1 + lambda/m * Theta1reg;
 
 
 % -------------------------------------------------------------
