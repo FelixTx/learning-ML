@@ -62,15 +62,40 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
+Y = zeros(m, num_labels);
+
+for elt = 1:m
+	Y(elt,y(elt)) = 1;
+end
+X = [ones(m,1) X];
+
+size(X)
+
+size(Theta1)
+
+a2 = sigmoid(X*Theta1');
+a2 = [ones(m,1) a2];
+size(a2)
+
+size(Theta2)
+
+a3 = sigmoid(a2*Theta2');
+size(a3)
+
+size(Y)
 
 
 
+for M = 1:m
+	ym  = Y(M,:);
+	a3m = a3(M,:);
+	J = J + 1/m * (-ym * log(a3m') - (1 - ym) * log(1 - a3m'));
+end
 
+Theta1reg = [zeros(hidden_layer_size,1) Theta1(:,2:end)];
+Theta2reg = [zeros(num_labels,1) Theta2(:,2:end)];
 
-
-
-
-
+J = J + lambda/2/m*(trace(Theta2reg(:)'*Theta2reg(:))+ trace(Theta1reg(:)'*Theta1reg(:)));
 
 
 
